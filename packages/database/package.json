@@ -1,0 +1,26 @@
+{
+  "name": "@workspace/database",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist node_modules"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.1"
+  },
+  "devDependencies": {
+    "@workspace/typescript-config": "workspace:*",
+    "drizzle-kit": "^0.31.9",
+    "tsup": "^8.5.1"
+  },
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
+  }
+}
