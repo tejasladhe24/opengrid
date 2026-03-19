@@ -1,10 +1,10 @@
 import { env } from "@/env"
 import { toast } from "sonner"
 import { authClient } from "@/lib/auth-client"
-import { useNavigate } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { useForm } from "@tanstack/react-form"
 import { z } from "zod"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { LogoBusiness } from "@workspace/ui/components/logo"
 import {
   Card,
@@ -19,17 +19,42 @@ import {
   FieldGroup,
   FieldError,
 } from "@workspace/ui/components/field"
-import { Button } from "@workspace/ui/components/button"
+import { Button, buttonVariants } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 
 import { createFileRoute } from "@tanstack/react-router"
-import { Loader2Icon } from "lucide-react"
+import { Loader2Icon, UserCheckIcon } from "lucide-react"
+import { getSession } from "@/server/auth"
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+  EmptyContent,
+} from "@workspace/ui/components/empty"
+import { Label } from "@workspace/ui/components/label"
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@workspace/ui/components/hover-card"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@workspace/ui/components/avatar"
+import { cn } from "@workspace/ui/lib/utils"
 
 export const Route = createFileRoute("/(auth)/login")({
   validateSearch: z.object({
     redirect: z.string().optional(),
   }),
   component: LoginForm,
+  loader: async () => {
+    const session = await getSession()
+    return { session }
+  },
   head: () => ({
     meta: [
       {
@@ -55,6 +80,9 @@ const formSchema = z.object({
 
 function LoginForm() {
   const redirectTo = Route.useSearch().redirect ?? env.VITE_SELF_URL
+
+  const { session } = Route.useLoaderData()
+
   const [showPassword, setShowPassword] = useState(false)
 
   const navigate = useNavigate()
@@ -84,6 +112,10 @@ function LoginForm() {
   })
 
   const isLoading = form.state.isSubmitting
+
+  if (session?.user?.id) {
+    return <LoggedIn />
+  }
 
   return (
     <div className="relative flex min-h-svh flex-col items-center justify-center gap-6 bg-transparent p-6 md:p-10">
@@ -185,5 +217,90 @@ function LoginForm() {
         </div>
       </div>
     </div>
+  )
+}
+
+const TIMEOUT_SECONDS = 5
+
+function LoggedIn() {
+  const { session } = Route.useLoaderData()
+
+  const [secondsLeft, setSecondsLeft] = useState(TIMEOUT_SECONDS)
+
+  const initials = session.user?.name
+    ?.split(" ")
+    .map((name: string) => name[0])
+    .join("")
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigate({ to: "/" })
+    }, TIMEOUT_SECONDS * 1000)
+
+    const interval = setInterval(() => {
+      setSecondsLeft((prev) => prev - 1)
+    }, 1000)
+
+    return () => {
+      clearTimeout(timer)
+      clearInterval(interval)
+    }
+  }, [])
+
+  return (
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia className="size-auto">
+          <UserCheckIcon className="size-8" />
+        </EmptyMedia>
+        <EmptyTitle>Already Logged In</EmptyTitle>
+        <EmptyDescription>
+          You are already logged in with
+          <HoverCard>
+            <HoverCardTrigger>
+              <Button variant="link" className="px-1">
+                {session?.user?.email}
+              </Button>
+            </HoverCardTrigger>
+            <HoverCardContent className="flex w-64 flex-col gap-0.5">
+              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage
+                    src={session?.user?.image ?? ""}
+                    alt={session?.user?.name ?? ""}
+                  />
+                  <AvatarFallback className="rounded-lg">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium">
+                    {session?.user?.name ?? ""}
+                  </span>
+                  <span className="truncate text-xs">
+                    {session?.user?.email ?? ""}
+                  </span>
+                </div>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+          . You can continue to the home page.
+        </EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent className="flex-row justify-center gap-2">
+        <Link to="/" className={cn(buttonVariants({ variant: "link" }))}>
+          Go to Home
+        </Link>
+        <Button variant="default" onClick={() => authClient.signOut()}>
+          Log Out
+        </Button>
+      </EmptyContent>
+
+      <Label className="font-normal text-muted-foreground">
+        Redirecting to home in {secondsLeft} seconds...
+      </Label>
+    </Empty>
   )
 }

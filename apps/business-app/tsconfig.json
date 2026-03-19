@@ -1,6 +1,6 @@
 {
   "extends": "@workspace/typescript-config/tanstackstart.json",
-  "display": "Web",
+  "display": "Business",
   "compilerOptions": {
     "types": ["vite/client"],
     "baseUrl": ".",
