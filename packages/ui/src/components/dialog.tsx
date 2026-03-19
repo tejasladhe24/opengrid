@@ -16,7 +16,7 @@ interface IDialogContext {
 const DialogContext = React.createContext<IDialogContext>({
   isOpen: false,
   onClose: () => {},
-  onOpen: (type: string, data?: Record<string, any>) => {},
+  onOpen: () => {},
   type: null,
   data: undefined,
 })

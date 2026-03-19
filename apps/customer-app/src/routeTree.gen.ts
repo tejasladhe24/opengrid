@@ -17,6 +17,7 @@ import { Route as ApiHealthIndexRouteImport } from './routes/api/health/index'
 import { Route as appIndexRouteImport } from './routes/(app)/_.index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiAcceptInvitationInvitationIdRouteImport } from './routes/api/accept-invitation/$invitationId'
+import { Route as appBOrgIdRouteImport } from './routes/(app)/b/$orgId'
 
 const authSignupRoute = authSignupRouteImport.update({
   id: '/(auth)/signup',
@@ -58,11 +59,17 @@ const ApiAcceptInvitationInvitationIdRoute =
     path: '/api/accept-invitation/$invitationId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const appBOrgIdRoute = appBOrgIdRouteImport.update({
+  id: '/(app)/b/$orgId',
+  path: '/b/$orgId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/forgot-password': typeof authForgotPasswordRoute
   '/login': typeof authLoginRoute
   '/signup': typeof authSignupRoute
+  '/b/$orgId': typeof appBOrgIdRoute
   '/api/accept-invitation/$invitationId': typeof ApiAcceptInvitationInvitationIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/': typeof appIndexRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof authForgotPasswordRoute
   '/login': typeof authLoginRoute
   '/signup': typeof authSignupRoute
+  '/b/$orgId': typeof appBOrgIdRoute
   '/api/accept-invitation/$invitationId': typeof ApiAcceptInvitationInvitationIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/': typeof appIndexRoute
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/signup': typeof authSignupRoute
+  '/(app)/b/$orgId': typeof appBOrgIdRoute
   '/api/accept-invitation/$invitationId': typeof ApiAcceptInvitationInvitationIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/(app)/_/': typeof appIndexRoute
@@ -94,6 +103,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/signup'
+    | '/b/$orgId'
     | '/api/accept-invitation/$invitationId'
     | '/api/auth/$'
     | '/'
@@ -103,6 +113,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/signup'
+    | '/b/$orgId'
     | '/api/accept-invitation/$invitationId'
     | '/api/auth/$'
     | '/'
@@ -113,6 +124,7 @@ export interface FileRouteTypes {
     | '/(auth)/forgot-password'
     | '/(auth)/login'
     | '/(auth)/signup'
+    | '/(app)/b/$orgId'
     | '/api/accept-invitation/$invitationId'
     | '/api/auth/$'
     | '/(app)/_/'
@@ -124,6 +136,7 @@ export interface RootRouteChildren {
   authForgotPasswordRoute: typeof authForgotPasswordRoute
   authLoginRoute: typeof authLoginRoute
   authSignupRoute: typeof authSignupRoute
+  appBOrgIdRoute: typeof appBOrgIdRoute
   ApiAcceptInvitationInvitationIdRoute: typeof ApiAcceptInvitationInvitationIdRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiHealthIndexRoute: typeof ApiHealthIndexRoute
@@ -187,6 +200,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAcceptInvitationInvitationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(app)/b/$orgId': {
+      id: '/(app)/b/$orgId'
+      path: '/b/$orgId'
+      fullPath: '/b/$orgId'
+      preLoaderRoute: typeof appBOrgIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -205,6 +225,7 @@ const rootRouteChildren: RootRouteChildren = {
   authForgotPasswordRoute: authForgotPasswordRoute,
   authLoginRoute: authLoginRoute,
   authSignupRoute: authSignupRoute,
+  appBOrgIdRoute: appBOrgIdRoute,
   ApiAcceptInvitationInvitationIdRoute: ApiAcceptInvitationInvitationIdRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiHealthIndexRoute: ApiHealthIndexRoute,
