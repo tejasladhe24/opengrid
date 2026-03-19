@@ -18,7 +18,7 @@ export const LogoBusiness = () => {
     <Button variant={"ghost"}>
       <h1 className="text-xl">
         Open
-        <span className="rounded-sm bg-indigo-500 px-0.5 text-primary">
+        <span className="rounded-sm bg-indigo-500 px-0.5 text-secondary">
           Grid
         </span>{" "}
         Business
